@@ -1,20 +1,19 @@
-import { useState,useRef,useEffect } from "react";
+import { useState } from "react";
 
 const SimpleInput = (props) => {
-
-  const nameInputRef = useRef()
   const [enteredName, setEnteredName] = useState('');
-  const [error, setError] = useState(false);
   const [reEnterValue, setReEnterValue] = useState(false);
 
-  useEffect(() => {
-    if (error) {
-      console.log('valid input');
-    }
-  }, [error]);
+  const error = enteredName.trim() !== '';
+  const nameInputIsValid = !error && reEnterValue;
 
   const inputChangeHandler = e => {
-    setEnteredName(e.target.value)
+    setEnteredName(e.target.value);
+  }
+
+  const inputBlur = e => {
+    setReEnterValue(true);
+    
   }
 
   const handleSubmit = e => {
@@ -22,18 +21,14 @@ const SimpleInput = (props) => {
 
     setReEnterValue(true);
 
-    if (enteredName.trim() === '') {
-      setError(false)
+    if (!enteredName) {
       return;
     }
 
-    setError(true);
-
     setEnteredName('');
+    setReEnterValue(false);
 
   }
-
-  const nameInputIsValid = !error && reEnterValue;
 
   const nameinputClasses = nameInputIsValid ? 'form-control invalid' : 'form-control';
 
@@ -42,7 +37,7 @@ const SimpleInput = (props) => {
       <div className={nameinputClasses}>
         <label htmlFor='name'>Your Name</label>
         <input
-          ref={nameInputRef}
+          onBlur={inputBlur}
           type='text'
           id='name'
           onChange={inputChangeHandler}
